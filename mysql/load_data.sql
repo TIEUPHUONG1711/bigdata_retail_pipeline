@@ -1,4 +1,4 @@
-LOAD DATA LOCAL INFILE '/tmp/Retail_Transaction_Dataset.csv'
+LOAD DATA LOCAL INFILE 'data/Retail_Transaction_Dataset.csv'
 INTO TABLE transactions
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
