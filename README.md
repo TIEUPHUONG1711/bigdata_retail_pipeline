@@ -7,13 +7,13 @@
 ## Project Pipeline
 1. MySQL: tạo bảng và load CSV
 2. Sqoop: import MySQL → Hive/HDFS
-3. Hive: tạo table, transform dữ liệu
+3. Hive: lưu dữ liệu sau khi đã làm sạch
 4. PySpark: clean dữ liệu, build fact table, aggregate
 5. Power BI: tạo dashboard từ Hive tables
 
 ## Folder Structure
 - mysql/: create/load SQL scripts
 - sqoop/: import scripts
-- hive/: Hive create/transform scripts
+- hive/: 
 - pyspark/: cleaning, fact, agg scripts
 - powerbi/: dashboard.pbix
