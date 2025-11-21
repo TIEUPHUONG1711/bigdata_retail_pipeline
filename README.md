@@ -2,7 +2,8 @@
 
 ## Dataset
 - Retail Transactions Dataset từ Kaggle
-- Fields: Transaction_ID, Customer_ID, Date, Product, Total_Items, Total_Cost, Payment_Method, Store_Type, City
+- Fields: CustomerID	ProductID	Quantity	Price	TransactionDate	PaymentMethod	StoreLocation	ProductCategory	DiscountApplied(%)	TotalAmount
+
 
 ## Project Pipeline
 1. MySQL: tạo bảng và load CSV
@@ -20,10 +21,12 @@
 
 ## HƯỚNG DẪN CHẠY
 Yêu cầu
-- MySQL 8.0+ hoặc Hive
+- MySQL 8.0+, Hive
 - Python 3.8+
-- PySpark
-
+- PySpark, sparksql
+- Sqoop
+- Docker
+  
 1. Clone repo:
 git clone https://github.com/TIEUPHUONG1711/bigdata_retail_pipeline.git
 cd bigdata_retail_pipeline
