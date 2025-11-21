@@ -12,11 +12,11 @@
 5. Power BI: tạo dashboard từ Hive tables
 
 ## Folder Structure
-- mysql/: create/load SQL scripts
-- sqoop/: import scripts
-- hive/: 
-- pyspark/: cleaning, fact, agg scripts
-- powerbi/: dashboard.pbix
+- mysql/: create_table.sql, load_data.sql
+- sqoop/: import_to_hive.sh
+- hive/: create_hive_tables.hql
+- pyspark_sparksql/: pyspark_cleaning.py
+- power_bi/: bigdata_retail_pipeline.pbix
 
 ## HƯỚNG DẪN CHẠY
 Yêu cầu
