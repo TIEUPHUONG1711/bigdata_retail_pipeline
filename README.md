@@ -2,7 +2,7 @@
 
 ## Dataset
 - Retail Transactions Dataset từ Kaggle
-- Fields: CustomerID	ProductID	Quantity	Price	TransactionDate	PaymentMethod	StoreLocation	ProductCategory	DiscountApplied(%)	TotalAmount
+- Fields: CustomerID, ProductID, Quantity, Price, TransactionDate, PaymentMethod, StoreLocation, ProductCategory, DiscountApplied(%), TotalAmount
 
 
 ## Project Pipeline
