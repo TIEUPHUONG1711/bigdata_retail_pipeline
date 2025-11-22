@@ -3,10 +3,8 @@ FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV HADOOP_HOME=/opt/hadoop
-<<<<<<< HEAD
 ENV HIVE_HOME=/opt/hive
 ENV PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$HIVE_HOME/bin
-=======
 ENV SPARK_HOME=/opt/spark
 ENV HIVE_HOME=/opt/hive
 ENV PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$SPARK_HOME/bin:$SPARK_HOME/sbin:$HIVE_HOME/bin
@@ -14,11 +12,9 @@ ENV PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$SPARK_HOME/bin:$SPARK_HOME/sb
 ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US:en
 ENV LC_ALL=en_US.UTF-8
->>>>>>> c72d9acd0552c1d29cb6339ea0e638b1975e743a
 
 # Cài đặt các dependency cơ bản
 RUN apt-get update && apt-get install -y \
-<<<<<<< HEAD
     wget curl git python3 python3-pip openjdk-11-jdk \
     mysql-client default-mysql-server \
     ssh rsync vim net-tools lsof sudo \
@@ -54,7 +50,6 @@ RUN chmod +x run/run_pipeline.sh
 EXPOSE 3306 10000
 
 # Khi container start, chạy script pipeline
-=======
     openjdk-11-jdk \
     python3 \
     python3-pip \
@@ -110,6 +105,5 @@ RUN chmod +x run/run_pipeline.sh
 EXPOSE 3306 10000 8080 4040 7077 50070
 
 # 12️⃣ CMD: chạy pipeline tự động khi container start
->>>>>>> c72d9acd0552c1d29cb6339ea0e638b1975e743a
 CMD ["/home/hadoop/bigdata_retail_pipeline/run/run_pipeline.sh"]
 
