@@ -95,8 +95,8 @@ RUN pip3 install --no-cache-dir pyspark findspark pandas numpy matplotlib mysql-
 RUN apt-get update && apt-get install -y default-mysql-server mysql-client
 
 # 9️⃣ Copy project vào container
-COPY . /opt/bigdata_retail_pipeline
-WORKDIR /opt/bigdata_retail_pipeline
+COPY . /home/hadoop/bigdata_retail_pipeline
+WORKDIR /home/hadoop/bigdata_retail_pipeline
 
 # 10️⃣ Cấp quyền chạy script
 RUN chmod +x run/run_pipeline.sh
