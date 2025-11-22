@@ -60,3 +60,6 @@ Yêu cầu
 
 7. Kết nối với Hive trên máy ảo và POWER BI trên máy window để tạo dashboard
 
+## Cách chạy đồ án : 
+- Chạy run:
+- /home/bigdata_retail_pipeline/run/run_pipeline.sh
