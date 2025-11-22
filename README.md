@@ -12,6 +12,9 @@
 4. PySpark: clean dữ liệu, build fact table, aggregate
 5. Power BI: tạo dashboard từ Hive tables
 
+## HƯỚNG DẪN CHẠY:
+-Chỉ cần chạy folder run:
+- bash /home/hadoop/bigdata_retail_pipeline/run/run_pipeline.sh
 
 ## Cách thức chạy đồ án trong folder run: 
 Yêu cầu
@@ -19,7 +22,6 @@ Yêu cầu
 - Python 3.8+
 - PySpark, sparksql
 - Sqoop
-- Docker
   
 1. Clone repo:
 - git clone https://github.com/TIEUPHUONG1711/bigdata_retail_pipeline.git
@@ -53,9 +55,7 @@ Yêu cầu
 
 7. Kết nối với Hive trên máy ảo và POWER BI trên máy window để tạo dashboard
 
-## HƯỚNG DẪN CHẠY:
--Chỉ cần chạy folder run:
-- bash /home/hadoop/bigdata_retail_pipeline/run/run_pipeline.sh
+
 
 
 
