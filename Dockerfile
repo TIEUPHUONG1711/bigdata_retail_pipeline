@@ -41,10 +41,11 @@ RUN wget https://downloads.apache.org/hadoop/common/hadoop-3.3.6/hadoop-3.3.6.ta
     && rm /tmp/hadoop.tar.gz
 
 # 4️⃣ Cài Spark
-RUN wget https://downloads.apache.org/spark/spark-3.5.1/spark-3.5.1-bin-hadoop3.tgz -O /tmp/spark.tgz \
+RUN wget https://downloads.apache.org/spark/spark-3.5.1/spark-3.5.1-bin-hadoop3-3.tgz -O /tmp/spark.tgz \
     && tar -xzf /tmp/spark.tgz -C /opt/ \
-    && mv /opt/spark-3.5.1-bin-hadoop3 $SPARK_HOME \
+    && mv /opt/spark-3.5.1-bin-hadoop3-3 $SPARK_HOME \
     && rm /tmp/spark.tgz
+
 
 # 5️⃣ Cài Hive
 RUN wget https://downloads.apache.org/hive/hive-3.1.3/apache-hive-3.1.3-bin.tar.gz -O /tmp/hive.tar.gz \
