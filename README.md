@@ -12,13 +12,6 @@
 4. PySpark: clean dữ liệu, build fact table, aggregate
 5. Power BI: tạo dashboard từ Hive tables
 
-## Folder Structure
-- mysql/: create_table.sql, load_data.sql
-- sqoop/: import_to_hive.sh
-- hive/: create_hive_tables.hql
-- pyspark_sparksql/: pyspark_cleaning.py
-- run/: run_pipeline.sh
-- power_bi/: bigdata_retail_pipeline.pbix
 
 ## Cách thức chạy đồ án trong folder run: 
 Yêu cầu
