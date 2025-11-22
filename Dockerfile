@@ -105,9 +105,6 @@ RUN chmod +x run/run_pipeline.sh
 EXPOSE 3306 10000 8080 4040 7077 50070
 
 # 12️⃣ CMD: chạy pipeline tự động khi container start
-<<<<<<< HEAD
 
-=======
->>>>>>> ae667ee580ff0d088cb3e2d27a53774e5414d8c4
 CMD ["/home/hadoop/bigdata_retail_pipeline/run/run_pipeline.sh"]
 
