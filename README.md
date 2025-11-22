@@ -53,11 +53,9 @@ Yêu cầu
 
 7. Kết nối với Hive trên máy ảo và POWER BI trên máy window để tạo dashboard
 
+## HƯỚNG DẪN CHẠY:
+-Chỉ cần chạy folder run:
+- bash /home/hadoop/bigdata_retail_pipeline/run/run_pipeline.sh
 
-## Hướng dẫn build & chạy Docker
-- Build image:
-- cd /home/hadoop/bigdata_retail_pipeline/
-- docker build -t bigdata_pipeline:latest .
 
-- Chạy container:
-- docker run -it -p 3306:3306 -p 10000:10000 bigdata_pipeline:latest
+
