@@ -17,9 +17,10 @@
 - sqoop/: import_to_hive.sh
 - hive/: create_hive_tables.hql
 - pyspark_sparksql/: pyspark_cleaning.py
+- run/: run_pipeline.sh
 - power_bi/: bigdata_retail_pipeline.pbix
 
-## HƯỚNG DẪN CHẠY
+## Cách thức chạy đồ án trong folder run: 
 Yêu cầu
 - MySQL 8.0+, Hive
 - Python 3.8+
