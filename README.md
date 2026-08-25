@@ -1,22 +1,22 @@
 # Retail Sales BI Pipeline
 
-Pipeline dữ liệu bán lẻ end-to-end phục vụ phân tích trên Power BI:
+An end-to-end retail data pipeline for analysis in Power BI:
 
 ```text
 Raw CSV → Python ETL → SQL Server (star schema) → Power BI
 ```
 
-Project xử lý 100.000 giao dịch từ CSV, kiểm tra và làm sạch dữ liệu bằng Python, nạp dữ liệu vào SQL Server theo mô hình fact/dimension, sau đó trực quan hóa bằng dashboard Power BI gồm 3 trang.
+The project processes 100,000 transactions from CSV, validates and cleans the data with Python, loads it into SQL Server using a fact/dimension model, and visualizes it in a three-page Power BI dashboard.
 
-## Công nghệ sử dụng
+## Technologies
 
-- Python 3.10+, Pandas, PyODBC và python-dotenv
-- Microsoft SQL Server và ODBC Driver 18
-- Power BI Desktop và DAX
+- Python 3.10+, Pandas, PyODBC, and python-dotenv
+- Microsoft SQL Server and ODBC Driver 18
+- Power BI Desktop and DAX
 
-Hadoop, Hive, Sqoop, MySQL và PySpark không được sử dụng trong phiên bản này.
+Hadoop, Hive, Sqoop, MySQL, and PySpark are not used in this version.
 
-## Cấu trúc project
+## Project Structure
 
 ```text
 bigdata_retail_pipeline/
@@ -34,37 +34,37 @@ bigdata_retail_pipeline/
 └── README.md
 ```
 
-## Quy trình ETL
+## ETL Process
 
-Script `python/clean_and_load.py` thực hiện:
+The `python/clean_and_load.py` script performs the following tasks:
 
-- Chuẩn hóa tên cột, khoảng trắng và dữ liệu text.
-- Chuyển địa chỉ nhiều dòng thành một dòng.
-- Ép kiểu dữ liệu số và ngày giờ.
-- Loại các dòng thiếu dữ liệu, sai kiểu hoặc sai miền giá trị.
-- Chỉ giữ `quantity > 0`, `price > 0` và discount từ 0 đến 100%.
-- Chỉ loại các giao dịch trùng hoàn toàn.
-- Làm tròn dữ liệu tiền tệ về hai chữ số thập phân.
-- Đối chiếu và tính lại `totalamount` theo công thức:
+- Standardizes column names, whitespace, and text data.
+- Converts multi-line addresses into a single line.
+- Casts numeric and datetime data types.
+- Removes rows with missing data, invalid types, or invalid value ranges.
+- Keeps only `quantity > 0`, `price > 0`, and discounts from 0% to 100%.
+- Removes only completely duplicated transactions.
+- Rounds monetary values to two decimal places.
+- Reconciles and recalculates `totalamount` using the formula:
 
 ```text
 quantity × price × (1 - discountapplied / 100)
 ```
 
-- Tạo surrogate key cho customer và product.
-- Nạp dimension trước fact trong một SQL transaction; rollback toàn bộ nếu load thất bại.
+- Creates surrogate keys for customers and products.
+- Loads dimensions before the fact table within one SQL transaction; everything is rolled back if loading fails.
 
-## Mô hình dữ liệu
+## Data Model
 
-Project sử dụng star schema gồm một fact table và ba dimension table.
+The project uses a star schema with one fact table and three dimension tables.
 
 ### `fact_retail`
 
-- `transaction_id`: khóa chính tự tăng; mỗi dòng là một giao dịch trong dataset.
-- `customer_key`, `product_key`: khóa ngoại tới dimension.
-- `customerid`, `productid`: business ID từ dữ liệu nguồn.
+- `transaction_id`: auto-increment primary key; each row represents one transaction in the dataset.
+- `customer_key`, `product_key`: foreign keys to the dimensions.
+- `customerid`, `productid`: business IDs from the source data.
 - `quantity`, `price`, `discountapplied`, `totalamount`.
-- `transactiondateonly`: ngày giao dịch.
+- `transactiondateonly`: transaction date.
 
 ### `dim_customer`
 
@@ -86,30 +86,30 @@ Project sử dụng star schema gồm một fact table và ba dimension table.
 - `transactionmonth`
 - `transactionyear`
 
-### Surrogate key và relationships
+### Surrogate Keys and Relationships
 
-Trong dữ liệu nguồn, cùng một `customerid` có thể xuất hiện với nhiều payment method/location và cùng một `productid` có thể đi cùng nhiều category. Vì vậy, `customerid` và `productid` không đủ duy nhất để làm phía `1` của relationship.
+In the source data, the same `customerid` can appear with multiple payment methods/locations, and the same `productid` can be associated with multiple categories. Therefore, `customerid` and `productid` are not unique enough to be on the `1` side of a relationship.
 
-Dimension được xác định theo các tổ hợp nghiệp vụ:
+Dimensions are identified using the following business combinations:
 
 - Customer: (`customerid`, `paymentmethod`, `storelocation`)
 - Product: (`productid`, `productcategory`)
 
-Relationships trong Power BI:
+Relationships in Power BI:
 
 ```text
-dim_customer[customer_key]        1 → * fact_retail[customer_key]
-dim_product[product_key]          1 → * fact_retail[product_key]
-dim_date[transactiondateonly]     1 → * fact_retail[transactiondateonly]
+dim_customer[customer_key]       1 → * fact_retail[customer_key]
+dim_product[product_key]         1 → * fact_retail[product_key]
+dim_date[transactiondateonly]    1 → * fact_retail[transactiondateonly]
 ```
 
-Đặt `Cross-filter direction = Single` từ dimension sang fact. Không tạo relationship bằng `customerid` hoặc `productid`.
+Set `Cross-filter direction = Single` from dimension to fact. Do not create relationships using `customerid` or `productid`.
 
-> Lưu ý mô hình: `paymentmethod` và `storelocation` thay đổi theo giao dịch trong dữ liệu nguồn. Project hiện dùng surrogate key theo tổ hợp để bảo toàn dữ liệu và relationship. Trong mô hình production, hai thuộc tính này có thể được đưa về transaction-level hoặc tách thành dimension riêng tùy yêu cầu phân tích.
+> Model note: `paymentmethod` and `storelocation` vary by transaction in the source data. The project currently uses surrogate keys based on combinations to preserve the data and relationships. In a production model, these two attributes could be moved to the transaction level or separated into their own dimensions depending on analytical requirements.
 
-## DAX measures
+## DAX Measures
 
-Trong Power BI, tạo một bảng riêng tên `Measures` và đặt các measure sau vào bảng này:
+In Power BI, create a separate table named `Measures` and place the following measures in this table:
 
 ```DAX
 Total Retail =
@@ -140,58 +140,58 @@ Retail per Customer =
 DIVIDE([Total Retail], [Total Customers])
 ```
 
-`Total Transactions` dùng `transaction_id` để thể hiện rõ grain của fact table. Với dữ liệu hiện tại, kết quả tương đương `COUNTROWS(fact_retail)`.
+`Total Transactions` uses `transaction_id` to clearly represent the grain of the fact table. With the current data, the result is equivalent to `COUNTROWS(fact_retail)`.
 
-## Dashboard Power BI
+## Power BI Dashboard
 
-File report: `power_bi/bigdata_retail_pipeline.pbix`.
+Report file: `power_bi/bigdata_retail_pipeline.pbix`.
 
 ### Page 1 — Sales Overview
 
-Trang tổng quan trả lời câu hỏi: tình hình kinh doanh hiện tại như thế nào?
+The overview page answers the question: How is the business currently performing?
 
-- KPI cards: Total Retail, Total Transactions, Total Quantity và Average Transaction Value.
-- Line chart: Monthly Retail Trend theo `dim_date[transactiondateonly]` và Total Retail.
-- Bar chart: Sales by Product, sắp xếp Total Retail giảm dần.
-- Bar chart: Top 10 Store Locations theo Total Retail.
+- KPI cards: Total Retail, Total Transactions, Total Quantity, and Average Transaction Value.
+- Line chart: Monthly Retail Trend using `dim_date[transactiondateonly]` and Total Retail.
+- Bar chart: Sales by Product, sorted by Total Retail in descending order.
+- Bar chart: Top 10 Store Locations by Total Retail.
 - Donut chart: Sales by Payment Method.
-- Slicers: Year, Product Category và Store Location.
+- Slicers: Year, Product Category, and Store Location.
 
-Vì `transactionmonth` trong database là số tháng từ 1–12, có thể dùng trực tiếp để giữ đúng thứ tự. Nếu hiển thị tên tháng bằng một calculated column, cần sort tên tháng theo cột số tháng.
+Because `transactionmonth` in the database is a month number from 1–12, it can be used directly to preserve the correct order. If month names are displayed using a calculated column, the month names must be sorted by the numeric month column.
 
 ### Page 2 — Product Performance
 
-Trang phân tích sản phẩm trả lời câu hỏi: sản phẩm/category nào tạo doanh thu, sản lượng và mức discount nổi bật?
+The product analysis page answers the question: Which products/categories stand out in terms of revenue, quantity, and discount levels?
 
-- KPI cards: Total Products, Total Retail, Total Quantity và Average Price.
+- KPI cards: Total Products, Total Retail, Total Quantity, and Average Price.
 - Bar chart: Retail by Product.
 - Column/bar chart: Quantity by Product.
-- Donut hoặc bar chart: Retail by Product Category.
+- Donut or bar chart: Retail by Product Category.
 - Bar chart: Average Discount by Product.
-- Slicers: Year, Product Category và Product ID.
+- Slicers: Year, Product Category, and Product ID.
 
-Các chart theo product nên được sort giảm dần theo measure tương ứng; có thể áp dụng Top N khi cần tăng khả năng đọc.
+Product charts should be sorted in descending order by the corresponding measure; Top N can be applied when needed to improve readability.
 
 ### Page 3 — Customer & Store Analysis
 
-Trang phân tích customer/store trả lời câu hỏi: customer, store location và payment method nào đóng góp nhiều nhất?
+The customer/store analysis page answers the question: Which customers, store locations, and payment methods contribute the most?
 
-- KPI cards: Total Customers, Total Retail, Retail per Customer và Total Transactions.
-- Bar chart: Top 10 Store Locations theo Total Retail.
+- KPI cards: Total Customers, Total Retail, Retail per Customer, and Total Transactions.
+- Bar chart: Top 10 Store Locations by Total Retail.
 - Donut chart: Retail by Payment Method.
-- Bar chart: Customers by Store, dùng distinct count customer.
-- Store Performance table: Store Location, Total Retail, Total Transactions, Total Quantity, Total Customers và Retail per Customer.
-- Slicers: Year, Store Location và Payment Method.
+- Bar chart: Customers by Store, using distinct count of customers.
+- Store Performance table: Store Location, Total Retail, Total Transactions, Total Quantity, Total Customers, and Retail per Customer.
+- Slicers: Year, Store Location, and Payment Method.
 
-Ba trang tạo thành luồng phân tích từ tổng quan đến các business driver:
+The three pages form an analytical flow from overview to business drivers:
 
 ```text
 Sales Overview → Product Performance → Customer & Store Analysis
 ```
 
-## Cài đặt
+## Installation
 
-Yêu cầu: Python 3.10+, SQL Server và ODBC Driver 18 for SQL Server.
+Requirements: Python 3.10+, SQL Server, and ODBC Driver 18 for SQL Server.
 
 ```powershell
 py -m venv .venv
@@ -200,31 +200,31 @@ pip install -r requirements.txt
 Copy-Item .env.example .env
 ```
 
-Điền cấu hình SQL Server trong `.env`. Project hỗ trợ Windows Authentication qua `SQL_TRUSTED_CONNECTION=yes` hoặc SQL Server Authentication bằng username/password. Không commit file `.env` vì có thể chứa thông tin đăng nhập.
+Fill in the SQL Server configuration in `.env`. The project supports Windows Authentication through `SQL_TRUSTED_CONNECTION=yes` or SQL Server Authentication using a username/password. Do not commit the `.env` file because it may contain login credentials.
 
-## Chạy pipeline
+## Running the Pipeline
 
-1. Chạy `sql/create_database.sql` trong SQL Server Management Studio.
+1. Run `sql/create_database.sql` in SQL Server Management Studio.
 
-   Script tạo database nếu chưa tồn tại, sau đó drop và tạo lại các bảng của project. Dữ liệu hiện có trong các bảng này sẽ bị thay thế.
+   The script creates the database if it does not already exist, then drops and recreates the project tables. Existing data in these tables will be replaced.
 
-2. Kiểm tra và làm sạch dữ liệu mà chưa load vào SQL Server:
+2. Validate and clean the data without loading it into SQL Server:
 
 ```powershell
 python python/clean_and_load.py --dry-run
 ```
 
-3. Làm sạch và nạp dữ liệu:
+3. Clean and load the data:
 
 ```powershell
 python python/clean_and_load.py
 ```
 
-4. Chạy `sql/data_quality_checks.sql` để kiểm tra row count, duplicate business keys, missing foreign keys và công thức `totalamount`.
+4. Run `sql/data_quality_checks.sql` to check row count, duplicate business keys, missing foreign keys, and the `totalamount` formula.
 
-## Kết nối Power BI
+## Connecting Power BI
 
-Trong Power BI Desktop, chọn **Get Data → SQL Server**:
+In Power BI Desktop, select **Get Data → SQL Server**:
 
 ```text
 Server: localhost
@@ -233,27 +233,25 @@ Authentication: Windows
 Data connectivity mode: Import
 ```
 
-Import `fact_retail`, `dim_customer`, `dim_product` và `dim_date`, sau đó kiểm tra relationships theo surrogate key như mô tả ở trên.
+Import `fact_retail`, `dim_customer`, `dim_product`, and `dim_date`, then verify the relationships using surrogate keys as described above.
 
-## Kết quả kiểm tra
+## Validation Results
 
-Kết quả chạy `--dry-run` trên dataset hiện tại:
+Results from running `--dry-run` on the current dataset:
 
-| Chỉ số | Kết quả |
+| Metric | Result |
 |---|---:|
-| Raw rows | 100.000 |
-| Clean rows | 100.000 |
+| Raw rows | 100,000 |
+| Clean rows | 100,000 |
 | Rejected rows | 0 |
 | Duplicate rows | 0 |
 | Source total mismatches | 0 |
 
-| Bảng | Số dòng |
+| Table | Row Count |
 |---|---:|
-| `fact_retail` | 100.000 |
-| `dim_customer` | 100.000 |
+| `fact_retail` | 100,000 |
+| `dim_customer` | 100,000 |
 | `dim_product` | 16 |
 | `dim_date` | 366 |
 
-Không có fact record bị mất liên kết với dimension sau khi load và chạy data-quality checks.
-
-
+No fact records have missing relationships with dimensions after loading and running the data-quality checks.
