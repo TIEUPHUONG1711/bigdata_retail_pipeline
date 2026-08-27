@@ -34,6 +34,20 @@ bigdata_retail_pipeline/
 └── README.md
 ```
 
+## Business Requirements and Analytical Logic
+
+The following mapping translates the main business questions into measurable metrics and identifies the source data required for each analysis.
+
+| Business Question | Metrics | Required Data |
+|---|---|---|
+| How is overall sales performance? | Total Revenue, Total Transactions, Total Quantity | `TotalAmount`, `Quantity` |
+| How does revenue change over time? | Revenue by day, month, and year | `TotalAmount`, `TransactionDate` |
+| Which products and categories perform best? | Revenue and quantity by product/category | `ProductID`, `ProductCategory`, `TotalAmount`, `Quantity` |
+| Which stores perform best? | Revenue and transactions by store | `StoreLocation`, `TotalAmount` |
+| How much does each customer contribute? | Revenue and revenue per customer | `CustomerID`, `TotalAmount` |
+| Which payment methods contribute the most? | Revenue and transactions by payment method | `PaymentMethod`, `TotalAmount` |
+| How do discounts relate to revenue? | Revenue and average discount | `DiscountApplied(%)`, `Price`, `Quantity`, `TotalAmount` |
+
 ## ETL Process
 
 The `python/clean_and_load.py` script performs the following tasks:
@@ -187,6 +201,27 @@ The three pages form an analytical flow from overview to business drivers:
 
 ```text
 Sales Overview → Product Performance → Customer & Store Analysis
+```
+
+## Business Value and Potential Actions
+
+The dashboard helps translate analytical findings into potential business actions. Because this project uses a public Kaggle dataset and does not include cost, profit, inventory, or operational data, these actions should be treated as areas for further investigation rather than definitive recommendations.
+
+| Analytical Finding | Potential Business Action |
+|---|---|
+| Revenue declines during a period | Investigate changes in products, stores, discounts, or transaction volume and adjust sales plans where appropriate. |
+| A product or category generates high revenue and quantity | Prioritize stock availability and consider giving it greater visibility in sales campaigns. |
+| A product has low sales performance | Review its pricing, promotion, product placement, and inventory level before deciding whether to reduce purchasing. |
+| A store consistently outperforms others | Identify its successful operating practices and assess whether they can be applied to other stores. |
+| A store underperforms | Review its product mix, transaction volume, customer reach, and local sales activities. |
+| A payment method contributes a large share of transactions | Ensure that payment channel is reliable and explore suitable partnerships or promotions. |
+| A product receives high discounts without strong revenue | Reassess the promotion and investigate whether the discount is generating sufficient sales value. |
+| A customer contributes high revenue | Consider targeted retention, loyalty, or customer-care activities where appropriate. |
+
+This creates a practical analytical flow:
+
+```text
+Business Question → Metric → Insight → Potential Action
 ```
 
 ## Installation
