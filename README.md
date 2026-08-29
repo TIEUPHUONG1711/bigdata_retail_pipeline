@@ -48,25 +48,6 @@ The following mapping translates the main business questions into measurable met
 | Which payment methods contribute the most? | Revenue and transactions by payment method | `PaymentMethod`, `TotalAmount` |
 | How do discounts relate to revenue? | Revenue and average discount | `DiscountApplied(%)`, `Price`, `Quantity`, `TotalAmount` |
 
-## ETL Process
-
-The `python/clean_and_load.py` script performs the following tasks:
-
-- Standardizes column names, whitespace, and text data.
-- Converts multi-line addresses into a single line.
-- Casts numeric and datetime data types.
-- Removes rows with missing data, invalid types, or invalid value ranges.
-- Keeps only `quantity > 0`, `price > 0`, and discounts from 0% to 100%.
-- Removes only completely duplicated transactions.
-- Rounds monetary values to two decimal places.
-- Reconciles and recalculates `totalamount` using the formula:
-
-```text
-quantity × price × (1 - discountapplied / 100)
-```
-
-- Creates surrogate keys for customers and products.
-- Loads dimensions before the fact table within one SQL transaction; everything is rolled back if loading fails.
 
 ## Data Model
 
@@ -120,6 +101,26 @@ dim_date[transactiondateonly]    1 → * fact_retail[transactiondateonly]
 Set `Cross-filter direction = Single` from dimension to fact. Do not create relationships using `customerid` or `productid`.
 
 > Model note: `paymentmethod` and `storelocation` vary by transaction in the source data. The project currently uses surrogate keys based on combinations to preserve the data and relationships. In a production model, these two attributes could be moved to the transaction level or separated into their own dimensions depending on analytical requirements.
+
+## ETL Process
+
+The `python/clean_and_load.py` script performs the following tasks:
+
+- Standardizes column names, whitespace, and text data.
+- Converts multi-line addresses into a single line.
+- Casts numeric and datetime data types.
+- Removes rows with missing data, invalid types, or invalid value ranges.
+- Keeps only `quantity > 0`, `price > 0`, and discounts from 0% to 100%.
+- Removes only completely duplicated transactions.
+- Rounds monetary values to two decimal places.
+- Reconciles and recalculates `totalamount` using the formula:
+
+```text
+quantity × price × (1 - discountapplied / 100)
+```
+
+- Creates surrogate keys for customers and products.
+- Loads dimensions before the fact table within one SQL transaction; everything is rolled back if loading fails.
 
 ## DAX Measures
 
