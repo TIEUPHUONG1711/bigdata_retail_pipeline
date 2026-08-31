@@ -93,14 +93,16 @@ Dimensions are identified using the following business combinations:
 Relationships in Power BI:
 
 ```text
-dim_customer[customer_key]       1 → * fact_retail[customer_key]
+dim_customer[customer_key]       1 ↔ 1 fact_retail[customer_key]
 dim_product[product_key]         1 → * fact_retail[product_key]
 dim_date[transactiondateonly]    1 → * fact_retail[transactiondateonly]
 ```
 
-Set `Cross-filter direction = Single` from dimension to fact. Do not create relationships using `customerid` or `productid`.
+On the current dataset, `dim_customer` and `fact_retail` form a `1:1` relationship because every (`customerid`, `paymentmethod`, `storelocation`) combination occurs exactly once. Both tables therefore contain 100,000 unique `customer_key` values. This is a consequence of the selected customer-dimension grain, not a Power BI detection error.
 
-> Model note: `paymentmethod` and `storelocation` vary by transaction in the source data. The project currently uses surrogate keys based on combinations to preserve the data and relationships. In a production model, these two attributes could be moved to the transaction level or separated into their own dimensions depending on analytical requirements.
+Use single-direction filtering from dimension to fact for the `1:*` product and date relationships. Do not create relationships using `customerid` or `productid`.
+
+> Model limitation and improvement: `paymentmethod` and `storelocation` vary by transaction, so including them in the customer business key makes `dim_customer` as granular as the fact table in this dataset. The current model remains technically valid and preserves all source values, but it does not produce the typical customer `1:*` relationship. A production model should define `dim_customer` at one row per `customerid`, retain `paymentmethod` in the fact or create a payment dimension, and separate `storelocation` into a store dimension. That design would allow one customer key to be reused by many transactions.
 
 ## ETL Process
 
